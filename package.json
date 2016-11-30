@@ -1,0 +1,34 @@
+{
+  "name": "secret-site-web",
+  "version": "1.0.0",
+  "description": "Displays a secret site.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimkang/secret-site-web.git"
+  },
+  "keywords": [],
+  "author": "Jim Kang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimkang/secret-site-web/issues"
+  },
+  "homepage": "https://github.com/jimkang/secret-site-web",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babelify": "^7.3.0",
+    "browserify": "^8.1.3",
+    "eslint": "^3.4.0",
+    "purify-css": "^1.1.9",
+    "tape": "^3.0.3",
+    "uglify-js": "^2.4.17"
+  },
+  "dependencies": {
+    "basic-browser-request": "^5.0.1",
+    "d3-selection": "^1.0.3",
+    "standard-bail": "^2.0.1"
+  }
+}
