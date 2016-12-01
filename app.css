@@ -1,7 +1,13 @@
 body {
-  font-family: "helvetica neue";
+  font-family: 'helvetica neue';
+  display: flex;
 }
 
 .map-image {
-  width: 600px;
+  width: 500px;
+  height: 500px;
+}
+
+.leaflet-container a:link,a:visited {
+  color: #333;
 }
