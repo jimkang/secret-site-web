@@ -1,6 +1,8 @@
+@import 'https://fonts.googleapis.com/css?family=Vesper+Libre';
+
 body {
-  font-family: 'helvetica neue';
-  display: flex;
+  font-family: 'Vesper Libre';
+  /*display: flex;*/
 }
 
 .map-image {

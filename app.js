@@ -33,22 +33,10 @@ var tileLayerOpts = {
 function renderSite(res, site) {
   console.log(site);
 
-  // d3.select('#google-maps-frame').attr('src', streetviewMapURL);
-  var initial = site.name.charAt(0);
-
-  var mapImageURL = 'https://maps.googleapis.com/maps/api/staticmap?' +
-    `center=${site.location.lat},${site.location.lng}` +
-    '&zoom=13' +
-    '&scale=2' +
-    '&size=600x600' +
-    '&maptype=satellite' +
-    `&markers=color:black%7Clabel:${initial}%7C${site.location.lat},${site.location.lng}` +
-    `&key=${mapsApiKey}`;
-
-  d3.select('#google-map').attr('src', mapImageURL);
-
   var map = L.map('map', {zoomControl: false}).setView(site.location, 14);
   L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(map);
+
+  d3.select('#site-name').text(site.name);
 }
 
 function logError(error) {
