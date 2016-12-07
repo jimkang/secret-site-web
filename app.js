@@ -4,6 +4,7 @@ var d3 = require('d3-selection');
 require('leaflet');
 var state = require('./data/state.json');
 var qs = require('qs');
+var StrokeRouter = require('strokerouter');
 
 const publicAccessToken = 'pk.eyJ1IjoiZGVhdGhtdG4iLCJhIjoiY2lpdzNxaGFqMDAzb3Uya25tMmR5MDF6ayJ9.ILyMA2rUQZ6nzfa2xT41KQ';
 
@@ -32,6 +33,9 @@ var broadMapMarker;
 
   window.onhashchange = route;
   route();
+
+  var docStrokeRouter = StrokeRouter(document);
+  docStrokeRouter.routeKeyUp('n', null, goToNextSite);
 })());
 
 function renderSite(site) {
@@ -107,4 +111,21 @@ function identity(x) {
 
 function getSiteLink(siteName) {
   return '#/site=' + siteName;
+}
+
+function goToNextSite() {
+  var routeDict = qs.parse(window.location.hash.replace('#/', ''));
+  if ('site' in routeDict) {
+    let siteNames = Object.keys(state.sites);
+    let siteIndex = siteNames.indexOf(routeDict.site);
+    if (siteIndex !== -1) {
+      let nextIndex = siteIndex + 1;
+      if (nextIndex > siteNames.length - 1) {
+        nextIndex = 0;
+      }
+      renderSite(state.sites[siteNames[nextIndex]]);
+
+      window.location.hash = '#/' + qs.stringify({site: siteNames[nextIndex]});
+    }
+  }
 }
