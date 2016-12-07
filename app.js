@@ -20,6 +20,7 @@ var tileLayerOpts = {
 };
 
 var closeUpMap;
+var closeUpMapTileLayer;
 var broadMap;
 var closeUpMapMarker;
 var broadMapMarker;
@@ -28,7 +29,9 @@ var broadMapMarker;
   closeUpMap = L.map('map', {zoomControl: false});
   broadMap = L.map('broad-map', {zoomControl: false});
 
-  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(closeUpMap);
+  closeUpMapTileLayer = L.tileLayer(tileURLTemplate, tileLayerOpts);
+  closeUpMapTileLayer.addTo(closeUpMap);
+
   L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(broadMap);
 
   window.onhashchange = route;
@@ -45,7 +48,7 @@ function renderSite(site) {
     closeUpMapMarker.remove();
   }
 
-  closeUpMap.setView(site.location, 13);
+  setZoomToLevelWithTiles(closeUpMap, closeUpMapTileLayer, site.location, 13);
 
   closeUpMapMarker = L.polygon([
     site.location,
@@ -127,5 +130,28 @@ function goToNextSite() {
 
       window.location.hash = '#/' + qs.stringify({site: siteNames[nextIndex]});
     }
+  }
+}
+
+function setZoomToLevelWithTiles(mapLayer, mapTileLayer, coords, level) {
+  var levelToTry = level;
+  mapTileLayer.on('tileerror', respondToTileError);
+  setTimeout(dropErrorResponder, 3 * 1000);
+
+  mapLayer.setView(coords, levelToTry);
+  
+  function respondToTileError() {
+    levelToTry -= 1;
+    if (levelToTry < 1) {
+      dropErrorResponder();
+    }
+    else {
+      // console.error('Zooming out to', levelToTry);
+      mapLayer.setView(coords, levelToTry);
+    }
+  }
+
+  function dropErrorResponder() {
+    mapTileLayer.off('tileerror', respondToTileError);
   }
 }
