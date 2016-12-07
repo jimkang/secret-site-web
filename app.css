@@ -1,8 +1,15 @@
-@import 'https://fonts.googleapis.com/css?family=Vesper+Libre';
+@import 'https://fonts.googleapis.com/css?family=Vesper+Libre|Quattrocento+Sans';
 
 body {
-  font-family: 'Vesper Libre';
+  font-family: 'Quattrocento Sans';
+  margin-left: 2em;
+  margin-top: 1em;
+  background-color: #eee;
   /*display: flex;*/
+}
+
+.historical-event {
+  font-family: 'Vesper Libre';
 }
 
 .map-image {
@@ -12,4 +19,8 @@ body {
 
 .leaflet-container a:link,a:visited {
   color: #333;
+}
+
+#maps {
+  display: flex;
 }

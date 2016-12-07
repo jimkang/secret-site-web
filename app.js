@@ -2,10 +2,9 @@ var request = require('basic-browser-request');
 var sb = require('standard-bail')();
 var d3 = require('d3-selection');
 var leaflet = require('leaflet');
+var state = require('./data/state.json');
 
 const mapsApiKey = 'AIzaSyB4fdXriqOg-USlaTXDoEOb7JYIVHblYGs';
-
-L.Icon.Default.imagePath = 'http://api.tiles.mapbox.com/mapbox.js/v2.2.1/images';
 const publicAccessToken = 'pk.eyJ1IjoiZGVhdGhtdG4iLCJhIjoiY2lpdzNxaGFqMDAzb3Uya25tMmR5MDF6ayJ9.ILyMA2rUQZ6nzfa2xT41KQ';
 
 const tileURLTemplate = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' +
@@ -20,23 +19,39 @@ var tileLayerOpts = {
 };
 
 ((function go() {
-  var siteName = window.location.hash.split('#')[1].split('/')[1];
-  var dataURL = window.location.protocol + '//' + window.location.host + '/data/' + siteName + '.json';
-  var reqOpts = {
-    method: 'GET',
-    url: dataURL,
-    json: true
-  };
-  request(reqOpts, sb(renderSite, logError));
+  var segments = window.location.hash.split('#')[1].split('/');
+  var siteName = segments[1];
+  renderSite(state.sites[siteName]);
 })());
 
-function renderSite(res, site) {
+function renderSite(site) {
   console.log(site);
 
-  var map = L.map('map', {zoomControl: false}).setView(site.location, 14);
-  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(map);
+  var closeUpMap = L.map('map', {zoomControl: false}).setView(site.location, 13);
+  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(closeUpMap);
+
+  var polygon = L.polygon([
+    site.location,
+    {lat: site.location.lat - 0.001, lng: site.location.lng + 0.001},
+    {lat: site.location.lat - 0.001, lng: site.location.lng - 0.001}
+  ])
+  .addTo(closeUpMap);
+
+
+  var broadMap = L.map('broad-map', {zoomControl: false}).setView(site.location, 4);
+  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(broadMap);
+  L.marker(site.location).addTo(broadMap)
+
 
   d3.select('#site-name').text(site.name);
+  d3.select('#containing-entity-name').text(site.containingGeoEntity);
+  d3.select('#coords').text(site.location.lat + ', ' + site.location.lng);
+
+  var writeup = d3.select('#writeup');
+  var events = writeup.selectAll('.historical-event').data(site.history);
+  events.enter()
+    .append('p').classed('historical-event', true)
+    .text(e => `${site.name} was ${e.event} by ${e.actor.name}, driven by their hatred of ${e.actor.enemies.join(' and ')}.`);
 }
 
 function logError(error) {
