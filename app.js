@@ -1,11 +1,10 @@
-var request = require('basic-browser-request');
-var sb = require('standard-bail')();
+/* global L */
+
 var d3 = require('d3-selection');
-var leaflet = require('leaflet');
+require('leaflet');
 var state = require('./data/state.json');
 var qs = require('qs');
 
-const mapsApiKey = 'AIzaSyB4fdXriqOg-USlaTXDoEOb7JYIVHblYGs';
 const publicAccessToken = 'pk.eyJ1IjoiZGVhdGhtdG4iLCJhIjoiY2lpdzNxaGFqMDAzb3Uya25tMmR5MDF6ayJ9.ILyMA2rUQZ6nzfa2xT41KQ';
 
 const tileURLTemplate = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' +
