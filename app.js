@@ -65,9 +65,24 @@ function renderSite(site) {
 
   var writeup = d3.select('#writeup');
   var events = writeup.selectAll('.historical-event').data(site.history);
-  events.enter()
-    .append('p').classed('historical-event', true)
+  events.exit().remove();
+  var newEvents = events.enter()
+    .append('p').classed('historical-event', true);
+  newEvents.merge(events)
     .text(e => `${site.name} was ${e.event} by ${e.actor.name}, driven by their hatred of ${e.actor.enemies.join(' and ')}.`);
+}
+
+function renderIndex(sites) {
+  var indexRoot = d3.select('#index ul');
+  var siteItems = indexRoot.selectAll('.site-item').data(sites);
+  siteItems.exit().remove();
+  var newSiteItems = siteItems.enter().append('li').classed('site-item', true);
+  newSiteItems.append('a');
+
+  var currentSiteItems = newSiteItems.merge(siteItems);
+  currentSiteItems.selectAll('a')
+    .attr('href', getSiteLink)
+    .text(identity);
 }
 
 function logError(error) {
@@ -78,7 +93,18 @@ function logError(error) {
 
 function route() {
   var routeDict = qs.parse(window.location.hash.replace('#/', ''));
-  if ('site' in routeDict) {
+  if ('index' in routeDict) {
+    renderIndex(Object.keys(state.sites));
+  }
+  else if ('site' in routeDict) {
     renderSite(state.sites[routeDict.site]);
   }
+}
+
+function identity(x) {
+  return x;
+}
+
+function getSiteLink(siteName) {
+  return '#/site=' + siteName;
 }
