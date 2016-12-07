@@ -30,6 +30,7 @@
     "basic-browser-request": "^5.0.1",
     "d3-selection": "^1.0.3",
     "leaflet": "^1.0.2",
+    "qs": "^6.3.0",
     "standard-bail": "^2.0.1"
   }
 }

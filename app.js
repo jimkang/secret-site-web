@@ -3,6 +3,7 @@ var sb = require('standard-bail')();
 var d3 = require('d3-selection');
 var leaflet = require('leaflet');
 var state = require('./data/state.json');
+var qs = require('qs');
 
 const mapsApiKey = 'AIzaSyB4fdXriqOg-USlaTXDoEOb7JYIVHblYGs';
 const publicAccessToken = 'pk.eyJ1IjoiZGVhdGhtdG4iLCJhIjoiY2lpdzNxaGFqMDAzb3Uya25tMmR5MDF6ayJ9.ILyMA2rUQZ6nzfa2xT41KQ';
@@ -18,30 +19,46 @@ var tileLayerOpts = {
   accessToken: publicAccessToken
 };
 
+var closeUpMap;
+var broadMap;
+var closeUpMapMarker;
+var broadMapMarker;
+
 ((function go() {
-  var segments = window.location.hash.split('#')[1].split('/');
-  var siteName = segments[1];
-  renderSite(state.sites[siteName]);
+  closeUpMap = L.map('map', {zoomControl: false});
+  broadMap = L.map('broad-map', {zoomControl: false});
+
+  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(closeUpMap);
+  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(broadMap);
+
+  window.onhashchange = route;
+  route();
 })());
 
 function renderSite(site) {
   console.log(site);
 
-  var closeUpMap = L.map('map', {zoomControl: false}).setView(site.location, 13);
-  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(closeUpMap);
+  if (closeUpMapMarker) {
+    closeUpMapMarker.remove();
+  }
 
-  var polygon = L.polygon([
+  closeUpMap.setView(site.location, 13);
+
+  closeUpMapMarker = L.polygon([
     site.location,
     {lat: site.location.lat - 0.001, lng: site.location.lng + 0.001},
     {lat: site.location.lat - 0.001, lng: site.location.lng - 0.001}
-  ])
-  .addTo(closeUpMap);
+  ]);
+  closeUpMapMarker.addTo(closeUpMap);
 
+  if (broadMapMarker) {
+    broadMapMarker.remove();
+  }
 
-  var broadMap = L.map('broad-map', {zoomControl: false}).setView(site.location, 4);
-  L.tileLayer(tileURLTemplate, tileLayerOpts).addTo(broadMap);
-  L.marker(site.location).addTo(broadMap)
+  broadMap.setView(site.location, 4);
 
+  broadMapMarker = L.marker(site.location);
+  broadMapMarker.addTo(broadMap);
 
   d3.select('#site-name').text(site.name);
   d3.select('#containing-entity-name').text(site.containingGeoEntity);
@@ -57,5 +74,12 @@ function renderSite(site) {
 function logError(error) {
   if (error) {
     console.error(error, error.stack);
+  }
+}
+
+function route() {
+  var routeDict = qs.parse(window.location.hash.replace('#/', ''));
+  if ('site' in routeDict) {
+    renderSite(state.sites[routeDict.site]);
   }
 }
