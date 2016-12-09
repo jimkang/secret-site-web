@@ -66,7 +66,7 @@ function renderSite(site) {
   broadMapMarker = L.marker(site.location);
   broadMapMarker.addTo(broadMap);
 
-  d3.select('#site-name').text(site.name);
+  d3.select('#site-name').text(site.id);
   d3.select('#containing-entity-name').text(site.containingGeoEntity);
   d3.select('#coords').text(site.location.lat + ', ' + site.location.lng);
 
@@ -119,16 +119,16 @@ function getSiteLink(siteName) {
 function goToNextSite() {
   var routeDict = qs.parse(window.location.hash.replace('#/', ''));
   if ('site' in routeDict) {
-    let siteNames = Object.keys(state.sites);
-    let siteIndex = siteNames.indexOf(routeDict.site);
+    let siteIds = Object.keys(state.sites);
+    let siteIndex = siteIds.indexOf(routeDict.site);
     if (siteIndex !== -1) {
       let nextIndex = siteIndex + 1;
-      if (nextIndex > siteNames.length - 1) {
+      if (nextIndex > siteIds.length - 1) {
         nextIndex = 0;
       }
-      renderSite(state.sites[siteNames[nextIndex]]);
+      renderSite(state.sites[siteIds[nextIndex]]);
 
-      window.location.hash = '#/' + qs.stringify({site: siteNames[nextIndex]});
+      window.location.hash = '#/' + qs.stringify({site: siteIds[nextIndex]});
     }
   }
 }
