@@ -66,7 +66,7 @@ function renderSite(site) {
   broadMapMarker = L.marker(site.location);
   broadMapMarker.addTo(broadMap);
 
-  d3.select('#site-name').text(site.id);
+  d3.select('#site-name').text(site.name);
   d3.select('#containing-entity-name').text(site.containingGeoEntity);
   d3.select('#coords').text(site.location.lat + ', ' + site.location.lng);
 
