@@ -76,7 +76,7 @@ function renderSite(site) {
   var newEvents = events.enter()
     .append('p').classed('historical-event', true);
   newEvents.merge(events)
-    .text(e => `${site.name} was ${e.event} by ${e.actor.name}, driven by their hatred of ${e.actor.enemies.join(' and ')}.`);
+    .text(e => `${site.name} was ${e.event} by ${state.organizations[e.actor].name}.`);
 }
 
 function renderIndex(sites) {
@@ -99,7 +99,7 @@ function logError(error) {
 }
 
 function route() {
-  var routeDict = qs.parse(window.location.hash.replace('#/', ''));
+  var routeDict = qs.parse(window.location.search.slice(1));
   if ('index' in routeDict) {
     renderIndex(Object.keys(state.sites));
   }
@@ -113,11 +113,11 @@ function identity(x) {
 }
 
 function getSiteLink(siteName) {
-  return '#/site=' + siteName;
+  return '?site=' + siteName;
 }
 
 function goToNextSite() {
-  var routeDict = qs.parse(window.location.hash.replace('#/', ''));
+  var routeDict = qs.parse(window.location.search.slice(1));
   if ('site' in routeDict) {
     let siteIds = Object.keys(state.sites);
     let siteIndex = siteIds.indexOf(routeDict.site);
@@ -128,7 +128,7 @@ function goToNextSite() {
       }
       renderSite(state.sites[siteIds[nextIndex]]);
 
-      window.location.hash = '#/' + qs.stringify({site: siteIds[nextIndex]});
+      window.location.search = qs.stringify({site: siteIds[nextIndex]});
     }
   }
 }
