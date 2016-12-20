@@ -6,6 +6,7 @@ var state = require('./data/state.json');
 var qs = require('qs');
 var StrokeRouter = require('strokerouter');
 var containingGeoEntityToString = require('./containing-geo-entity-to-string');
+var formatLocation = require('./format-location');
 
 const publicAccessToken = 'pk.eyJ1IjoiZGVhdGhtdG4iLCJhIjoiY2lpdzNxaGFqMDAzb3Uya25tMmR5MDF6ayJ9.ILyMA2rUQZ6nzfa2xT41KQ';
 
@@ -70,7 +71,7 @@ function renderSite(site) {
   d3.select('#site-name').text(site.name);
   d3.select('#containing-entity-name')
     .text(containingGeoEntityToString(site.containingGeoEntity));
-  d3.select('#coords').text(site.location.lat.toFixed(2) + ', ' + site.location.lng.toFixed(2));
+  d3.select('#coords').text(formatLocation(site.location));
 
   var writeup = d3.select('#writeup');
   var events = writeup.selectAll('.historical-event').data(site.history);
