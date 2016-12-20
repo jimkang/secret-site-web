@@ -5,6 +5,7 @@ require('leaflet');
 var state = require('./data/state.json');
 var qs = require('qs');
 var StrokeRouter = require('strokerouter');
+var containingGeoEntityToString = require('./containing-geo-entity-to-string');
 
 const publicAccessToken = 'pk.eyJ1IjoiZGVhdGhtdG4iLCJhIjoiY2lpdzNxaGFqMDAzb3Uya25tMmR5MDF6ayJ9.ILyMA2rUQZ6nzfa2xT41KQ';
 
@@ -67,7 +68,8 @@ function renderSite(site) {
   broadMapMarker.addTo(broadMap);
 
   d3.select('#site-name').text(site.name);
-  d3.select('#containing-entity-name').text(site.containingGeoEntity);
+  d3.select('#containing-entity-name')
+    .text(containingGeoEntityToString(site.containingGeoEntity));
   d3.select('#coords').text(site.location.lat + ', ' + site.location.lng);
 
   var writeup = d3.select('#writeup');
@@ -99,7 +101,7 @@ function logError(error) {
 }
 
 function route() {
-  var routeDict = qs.parse(window.location.search.slice(1));
+  var routeDict = qs.parse(window.location.hash.slice(1));
   if ('index' in routeDict) {
     renderIndex(Object.keys(state.sites));
   }
@@ -113,11 +115,11 @@ function identity(x) {
 }
 
 function getSiteLink(siteName) {
-  return '?site=' + siteName;
+  return '#?site=' + siteName;
 }
 
 function goToNextSite() {
-  var routeDict = qs.parse(window.location.search.slice(1));
+  var routeDict = qs.parse(window.location.hash.slice(1));
   if ('site' in routeDict) {
     let siteIds = Object.keys(state.sites);
     let siteIndex = siteIds.indexOf(routeDict.site);
@@ -128,7 +130,7 @@ function goToNextSite() {
       }
       renderSite(state.sites[siteIds[nextIndex]]);
 
-      window.location.search = qs.stringify({site: siteIds[nextIndex]});
+      window.location.hash = qs.stringify({site: siteIds[nextIndex]});
     }
   }
 }
