@@ -70,7 +70,7 @@ function renderSite(site) {
   d3.select('#site-name').text(site.name);
   d3.select('#containing-entity-name')
     .text(containingGeoEntityToString(site.containingGeoEntity));
-  d3.select('#coords').text(site.location.lat + ', ' + site.location.lng);
+  d3.select('#coords').text(site.location.lat.toFixed(2) + ', ' + site.location.lng.toFixed(2));
 
   var writeup = d3.select('#writeup');
   var events = writeup.selectAll('.historical-event').data(site.history);
